@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Wydłużacz Linków</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f2f2f2; }
+    input, button, textarea { margin: 10px 0; padding: 10px; width: 100%; max-width: 600px; }
+    textarea { height: 100px; }
+  </style>
+</head>
+<body>
+  <h1>Wydłużacz Linków</h1>
+  <label for="link">Wklej link:</label>
+  <input type="text" id="link" placeholder="https://example.com">
+
+  <label for="length">Ile znaków chcesz dodać?</label>
+  <input type="number" id="length" min="1" max="1000" value="100">
+
+  <button onclick="extendLink()">Wydłuż link</button>
+
+  <label for="output">Wydłużony link:</label>
+  <textarea id="output" readonly></textarea>
+
+  <script>
+    function extendLink() {
+      const baseLink = document.getElementById('link').value.trim();
+      const length = parseInt(document.getElementById('length').value);
+      if (!baseLink || isNaN(length)) return;
+
+      const url = new URL(baseLink);
+      const params = url.searchParams;
+
+      let extraLength = length;
+      let filler = '';
+
+      while (filler.length < extraLength) {
+        const key = `utm_${Math.random().toString(36).substring(2, 6)}`;
+        const val = Math.random().toString(36).substring(2, 10);
+        const paramString = `&${key}=${val}`;
+        if (filler.length + paramString.length <= extraLength) {
+          filler += paramString;
+        } else {
+          break;
+        }
+      }
+
+      let fullLink = baseLink + (url.search ? '' : '?') + filler;
+      document.getElementById('output').value = fullLink;
+    }
+  </script>
+</body>
+</html>
